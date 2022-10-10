@@ -1,23 +1,23 @@
 import PropTypes from 'prop-types';
 import { Recipe } from '../Recipe/Recipe';
-import { ListItem } from './RecipeList.styled';
+import { List } from './RecipeList.styled';
 
 export const RecipeList = ({ recipes }) => {
   return (
-    <ul>
+    <List>
       {recipes.map((recipe) => (
-        <ListItem key={recipe.id}>
+        <li key={recipe.id}>
           <Recipe recipe={recipe} />
-        </ListItem>
+        </li>
       ))}
-    </ul>
+    </List>
   );
 };
 
 RecipeList.propTypes = {
   recipes: PropTypes.arrayOf(
     PropTypes.shape({
-      id: PropTypes.string.isRequired,
+      id: PropTypes.number.isRequired,
     })
   ),
 };

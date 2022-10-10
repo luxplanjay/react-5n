@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
-export const ListItem = styled.li`
-  :not(:last-child) {
-    margin-bottom: 8px;
-  }
+export const List = styled.ul`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 340px);
+  gap: 16px;
 `;
