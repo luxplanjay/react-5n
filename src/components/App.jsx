@@ -1,50 +1,43 @@
 import { Component } from 'react';
-import { fetchBreeds, fetchDogByBreed } from 'api';
+import { fetchDogByBreed } from 'api';
 import { Dog } from './Dog';
 import { GlobalStyle } from './GlobalStyle';
 import { BreedSelect } from './BreedSelect';
+import { DogSkeleton } from './DogSkeleton';
+import { ErrorMessage } from './ErrorMessage';
+import { Layout } from './Layout';
+import { errorMessages } from 'constants';
 
 export class App extends Component {
   state = {
-    breeds: [],
     dog: null,
     error: null,
+    isLoading: false,
   };
-
-  async componentDidMount() {
-    try {
-      const breeds = await fetchBreeds();
-      this.setState({ breeds: breeds });
-    } catch (error) {
-      this.setState({
-        error:
-          'Мы не смогли загрузить породы собачек, пожалуйста перезагрузите страницу чтобы попробовать еще раз 🥹',
-      });
-    }
-  }
 
   selectBreed = async (breedId) => {
     try {
+      this.setState({ isLoading: true });
       const dog = await fetchDogByBreed(breedId);
       this.setState({ dog });
-    } catch (e) {
-      this.setState({
-        error:
-          'Упс, мы не смогли загрузить собачку 😭. Попробуйте еще раз или перезагрузите страницу 😇',
-      });
+    } catch {
+      this.setState({ error: errorMessages.fetchDog });
+    } finally {
+      this.setState({ isLoading: false });
     }
   };
 
   render() {
-    const { breeds, dog, error } = this.state;
+    const { dog, error, isLoading } = this.state;
 
     return (
-      <>
-        <BreedSelect breeds={breeds} onSelect={this.selectBreed} />
-        {error && <div>{error}</div>}
-        {dog && <Dog dog={dog} />}
+      <Layout>
+        <BreedSelect onSelect={this.selectBreed} />
+        {error && <ErrorMessage>{error}</ErrorMessage>}
+        {isLoading && <DogSkeleton />}
+        {dog && !isLoading && <Dog dog={dog} />}
         <GlobalStyle />
-      </>
+      </Layout>
     );
   }
 }
