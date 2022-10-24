@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 
 export const App = () => {
   const [isVisible, setIsVisible] = useState(false);
+
   return (
     <div>
       <button onClick={() => setIsVisible((prevState) => !prevState)}>
@@ -13,10 +14,30 @@ export const App = () => {
   );
 };
 
-// https://jsonplaceholder.typicode.com/todos
-
 const ChildComponent = () => {
   const [todos, setTodos] = useState([]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function fetchData() {
+      try {
+        const res = await axios.get(
+          'https://jsonplaceholder.typicode.com/todos',
+          {
+            signal: controller.signal,
+          }
+        );
+        setTodos((prevTodos) => [...prevTodos, ...res.data]);
+      } catch (error) {}
+    }
+
+    fetchData();
+
+    return () => {
+      controller.abort();
+    };
+  }, []);
 
   return (
     <div>
